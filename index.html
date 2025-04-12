@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta name="google-site-verification" content="PAuQHXkuy1Oo2WAbKsScv8ehg1lxFcL04btg2PYIuW0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Sum 10 Challenge - 두뇌 회전 숫자 퍼즐 게임</title>
+    <meta name="description" content="숫자들의 합이 10이 되도록 연결하는 재미있는 두뇌 회전 퍼즐 게임입니다. 제한 시간 안에 얼마나 많은 숫자를 없앨 수 있을까요? 지금 도전해보세요!">
+    <meta name="keywords" content="숫자 게임, 합 10 만들기, 두뇌 게임, 퍼즐 게임, 웹 게임, number sum game, puzzle game">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #4CAF50; /* Green */
+            --secondary-color: #8BC34A; /* Light Green */
+            --background-color: #F1F8E9; /* Very Light Green */
+            --text-color: #333;
+            --white-color: #fff;
+            --highlight-color: #FFEB3B; /* Yellow */
+            --matched-color: #FFC107; /* Amber - Not used for background anymore */
+            --board-bg-color: #DCEDC8; /* Lighter Green */
+            --circle-size: 40px;
+            --gap-size: 8px;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 95%;
+            max-width: 900px; /* Increased max-width */
+            margin: 20px auto;
+            background-color: var(--white-color);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        /* Ad Placeholder Styles */
+        .ad-placeholder {
+            width: 100%;
+            min-height: 90px; /* Standard banner height */
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #aaa;
+            border: 1px dashed #ccc;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .game-area {
+            margin-top: 20px;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-around; /* Better spacing */
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            margin-bottom: 20px;
+            background-color: var(--background-color);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .game-info div {
+            margin: 5px 10px; /* Add some margin */
+        }
+
+        .game-info h2 {
+            margin: 0;
+            font-size: 1.1em; /* Adjust font size */
+            color: var(--primary-color);
+        }
+        .game-info span {
+            font-weight: bold;
+            color: var(--text-color);
+            font-size: 1.3em;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(17, 1fr);
+            grid-template-rows: repeat(10, 1fr); /* Adjusted rows if needed */
+            gap: var(--gap-size);
+            margin: 20px auto; /* Center the board */
+            background-color: var(--board-bg-color);
+            padding: 15px; /* Increased padding */
+            border-radius: 10px; /* Rounded corners */
+            position: relative;
+            max-width: calc(17 * (var(--circle-size) + var(--gap-size)) + 10px); /* Dynamic width */
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .circle {
+            width: var(--circle-size);
+            height: var(--circle-size);
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: calc(var(--circle-size) * 0.45); /* Scaled font size */
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            user-select: none; /* Prevent text selection */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .circle:hover {
+            filter: brightness(1.1);
+        }
+
+        .circle.selected {
+            background-color: var(--highlight-color);
+            color: var(--text-color);
+            transform: scale(1.1); /* Slightly bigger when selected */
+        }
+
+        /* ================== 여기가 수정된 부분 ================== */
+        .circle.matched { /* Style for matched circles - Now makes them disappear */
+            visibility: hidden;   /* 요소를 보이지 않게 함 (공간은 유지) */
+            cursor: default;      /* 커서 기본값으로 */
+            pointer-events: none; /* 클릭 등 이벤트 비활성화 */
+            /* Removed properties: background-color, opacity, animation */
+        }
+        /* ======================================================= */
+
+        /* Pop animation is no longer used by .matched, commenting out */
+        /*
+        @keyframes pop { /* Simple animation for matching */
+            /* 0% { transform: scale(1); } */
+            /* 50% { transform: scale(1.2); } */
+            /* 100% { transform: scale(1); opacity: 0.5; } */
+        /* } */
+        */
+
+        .game-controls {
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .btn:hover {
+            background-color: #388E3C; /* Darker Green */
+        }
+
+        .instructions {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+        }
+        .instructions h3 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        /* Game Over Overlay */
+        .overlay {
+            position: fixed; /* Changed from absolute to fixed */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none; /* Initially hidden */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .overlay-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .overlay-content h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+         .overlay-content p {
+            font-size: 1.2em;
+            margin: 10px 0;
+         }
+
+
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            width: 100%;
+            background-color: #e0e0e0;
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+            box-sizing: border-box;
+        }
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .container {
+                width: 98%;
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            .game-board {
+                max-width: 100%; /* Allow shrinking */
+            }
+             :root {
+                --circle-size: 35px;
+                --gap-size: 6px;
+            }
+            .game-info h2 {
+                font-size: 1em;
+            }
+             .game-info span {
+                 font-size: 1.1em;
+             }
+        }
+
+        @media (max-width: 600px) {
+             header h1 {
+                 font-size: 1.8em;
+             }
+            .game-info {
+                flex-direction: column;
+                align-items: center;
+                 padding: 10px;
+            }
+             .game-info div {
+                 margin: 8px 0;
+             }
+             :root {
+                --circle-size: 28px;
+                --gap-size: 4px;
+            }
+            .game-board {
+                 padding: 10px;
+             }
+             .btn {
+                 padding: 10px 20px;
+                 font-size: 0.9em;
+             }
+             .overlay-content {
+                 padding: 30px;
+                 width: 80%;
+             }
+        }
+         @media (max-width: 450px) {
+              :root {
+                 --circle-size: 22px;
+                 --gap-size: 3px;
+             }
+         }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Number Sum 10 Challenge</h1>
+        </header>
+
+        <div class="ad-placeholder">상단 광고 영역 (예: 728x90)</div>
+
+        <main class="game-area">
+            <div class="game-info">
+                <div class="score">
+                    <h2>SCORE: <span id="score">0</span></h2>
+                </div>
+                <div class="high-score"> <h2>HIGH SCORE: <span id="high-score">0</span></h2>
+                </div>
+                <div class="remaining">
+                    <h2>REMAINING: <span id="remaining-circles">170</span></h2>
+                </div>
+                <div class="timer">
+                    <h2>TIME: <span id="time">120</span>s</h2> </div>
+            </div>
+
+            <div id="game-board" class="game-board">
+                </div>
+
+            <div class="game-controls">
+                <button id="restart-button" class="btn">Restart Game</button>
+                </div>
+        </main>
+
+        <section class="instructions">
+             <h3>게임 방법</h3>
+             <p>같은 숫자 또는 합이 10이 되는 두 개의 숫자를 찾아 클릭하세요. 가로, 세로 또는 대각선으로 인접해 있거나, 중간에 다른 숫자가 없이 같은 줄의 끝과 시작에 있는 숫자들도 연결할 수 있습니다. (이 게임의 현재 로직은 합이 10인 것만 체크합니다. 인접성 규칙은 추가 개발이 필요합니다.) 제한 시간 안에 모든 숫자를 없애거나 최대한 많은 점수를 획득하세요!</p>
+             <p>시간이 다 되거나 남은 숫자가 없으면 게임이 종료됩니다.</p>
+         </section>
+
+        <div class="ad-placeholder">하단 광고 영역 (예: 320x100 or 728x90)</div>
+
+    </div> <footer>
+        <p>&copy; <span id="copy-year">2025</span> Your Game Company Name. All Rights Reserved.</p>
+        <p>
+            <a href="#privacy">개인정보처리방침</a> |
+            <a href="#terms">이용약관</a> |
+            <a href="#contact">문의하기</a>
+            </p>
+    </footer>
+
+    <div id="game-over-overlay" class="overlay">
+        <div class="overlay-content">
+            <h2 id="game-over-title">Game Over!</h2>
+            <p>Your Score: <span id="final-score">0</span></p>
+            <p>High Score: <span id="final-high-score">0</span></p>
+            <button id="play-again-button" class="btn">Play Again</button>
+        </div>
+    </div>
+
+    <audio id="click-sound" src="path/to/click.mp3" preload="auto"></audio>
+    <audio id="match-sound" src="path/to/match.mp3" preload="auto"></audio>
+    <audio id="gameover-sound" src="path/to/gameover.mp3" preload="auto"></audio>
+
+    <script>
+        const GRID_WIDTH = 17;
+        const GRID_HEIGHT = 10;
+        const GAME_TIME = 120; // seconds
+
+        let score = 0;
+        let highScore = 0;
+        let remainingCircles = 0; // Will be set in setupGame
+        let remainingTime = GAME_TIME;
+        let gameOver = true; // Start as true, set to false on game start
+        let selectedCircles = [];
+        let startTime;
+        let timerInterval;
+
+        // DOM Elements
+        const gameBoard = document.getElementById("game-board");
+        const scoreElement = document.getElementById("score");
+        const highScoreElement = document.getElementById("high-score");
+        const remainingCirclesElement = document.getElementById("remaining-circles");
+        const timeElement = document.getElementById("time");
+        const restartButton = document.getElementById("restart-button");
+        const gameOverOverlay = document.getElementById("game-over-overlay");
+        const finalScoreElement = document.getElementById("final-score");
+        const finalHighScoreElement = document.getElementById("final-high-score");
+        const playAgainButton = document.getElementById("play-again-button");
+        const copyYearElement = document.getElementById("copy-year");
+
+        // Audio Elements
+        const clickSound = document.getElementById('click-sound');
+        const matchSound = document.getElementById('match-sound');
+        const gameoverSound = document.getElementById('gameover-sound');
+
+        // --- Sound Functions ---
+        function playSound(sound) {
+             if (sound && sound.readyState >= 3) {
+                sound.currentTime = 0;
+                sound.play().catch(error => console.error("Audio playback error:", error));
+             }
+        }
+
+        // --- Game Initialization ---
+        function setupGame() {
+            console.log('Setting up game...');
+            gameBoard.innerHTML = '';
+            selectedCircles = [];
+            gameOver = false;
+            score = 0;
+            remainingCircles = GRID_WIDTH * GRID_HEIGHT;
+            remainingTime = GAME_TIME;
+            startTime = Date.now();
+            gameOverOverlay.style.display = 'none';
+
+            highScore = localStorage.getItem('numberSumHighScore') || 0;
+
+            for (let i = 0; i < GRID_WIDTH * GRID_HEIGHT; i++) {
+                 const value = Math.floor(Math.random() * 9) + 1;
+                 const circle = document.createElement('div');
+                 circle.classList.add('circle');
+                 circle.dataset.value = value;
+                 circle.textContent = value;
+                 circle.addEventListener('click', () => handleCircleClick(circle));
+                 gameBoard.appendChild(circle);
+            }
+
+            updateUI();
+            startTimer();
+            console.log('Game setup complete. Timer started.');
+        }
+
+        // --- Core Game Logic ---
+        function handleCircleClick(circle) {
+            if (gameOver || circle.classList.contains('matched')) return;
+
+            playSound(clickSound);
+
+            const index = selectedCircles.indexOf(circle);
+            if (index > -1) {
+                circle.classList.remove('selected');
+                selectedCircles.splice(index, 1);
+            } else {
+                 if (selectedCircles.length < 2) {
+                    circle.classList.add('selected');
+                    selectedCircles.push(circle);
+                 }
+            }
+
+            if (selectedCircles.length === 2) {
+                 checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const circle1 = selectedCircles[0];
+            const circle2 = selectedCircles[1];
+            const value1 = parseInt(circle1.dataset.value);
+            const value2 = parseInt(circle2.dataset.value);
+
+            if (value1 + value2 === 10) {
+                playSound(matchSound);
+                score += 1;
+                remainingCircles -= 2;
+
+                selectedCircles.forEach(c => {
+                    c.classList.remove('selected');
+                    c.classList.add('matched'); // This class now triggers visibility:hidden via CSS
+                });
+
+                selectedCircles = [];
+
+                 if (remainingCircles <= 0) {
+                     endGame(true);
+                 }
+
+            } else {
+                 setTimeout(() => {
+                     selectedCircles.forEach(c => c.classList.remove('selected'));
+                     selectedCircles = [];
+                 }, 300);
+            }
+             updateUI();
+        }
+
+        // --- UI Updates ---
+        function updateUI() {
+            scoreElement.textContent = score;
+            highScoreElement.textContent = highScore;
+            remainingCirclesElement.textContent = remainingCircles;
+            timeElement.textContent = Math.ceil(remainingTime);
+        }
+
+        // --- Timer Logic ---
+        function startTimer() {
+             if (timerInterval) clearInterval(timerInterval);
+
+             startTime = Date.now() - (GAME_TIME - remainingTime) * 1000;
+
+             timerInterval = setInterval(() => {
+                 if (gameOver) {
+                     clearInterval(timerInterval);
+                     return;
+                 }
+
+                 const elapsedTime = (Date.now() - startTime) / 1000;
+                 remainingTime = GAME_TIME - elapsedTime;
+
+                 if (remainingTime <= 0) {
+                     remainingTime = 0;
+                     endGame(false);
+                 }
+                 updateUI();
+             }, 1000);
+        }
+
+        // --- Game End Logic ---
+        function endGame(isWon) {
+            if (gameOver) return;
+
+            console.log('Game Over. Won:', isWon);
+            gameOver = true;
+            clearInterval(timerInterval);
+            playSound(gameoverSound);
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('numberSumHighScore', highScore);
+            }
+
+            finalScoreElement.textContent = score;
+            finalHighScoreElement.textContent = highScore;
+            gameOverOverlay.style.display = 'flex';
+            if (isWon) {
+                 document.getElementById('game-over-title').textContent = "Congratulations! You Cleared the Board!";
+             } else {
+                 document.getElementById('game-over-title').textContent = "Time's Up!";
+             }
+        }
+
+        // --- Event Listeners ---
+        restartButton.addEventListener('click', setupGame);
+        playAgainButton.addEventListener('click', setupGame);
+
+        // --- Initial Setup ---
+        copyYearElement.textContent = new Date().getFullYear();
+        highScore = localStorage.getItem('numberSumHighScore') || 0;
+        highScoreElement.textContent = highScore;
+        setupGame();
+
+    </script>
+
+</body>
+</html>
