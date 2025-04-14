@@ -5,24 +5,26 @@
     <meta name="google-adsense-account" content="ca-pub-4547328202745686">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Sum 10 Challenge - 바깥쪽 매칭 퍼즐 게임</title>
-    <meta name="description" content="가장 바깥쪽 숫자들의 합이 10이 되도록 연결하는 새로운 룰의 두뇌 회전 퍼즐 게임입니다. 전략적으로 숫자를 제거해보세요!">
-    <meta name="keywords" content="숫자 게임, 합 10 만들기, 두뇌 게임, 퍼즐 게임, 웹 게임, 바깥쪽 매칭">
+    <title>Number Sum 10 Challenge - 두뇌 회전 숫자 퍼즐 게임</title>
+    <meta name="description" content="숫자들의 합이 10이 되도록 연결하는 재미있는 두뇌 회전 퍼즐 게임입니다. 제한 시간 안에 얼마나 많은 숫자를 없앨 수 있을까요? 지금 도전해보세요!">
+    <meta name="keywords" content="숫자 게임, 합 10 만들기, 두뇌 게임, 퍼즐 게임, 웹 게임, number sum game, puzzle game">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --primary-color: #FF9800; /* Orange */
-            --secondary-color: #FFC107; /* Amber */
-            --background-color: #FFF3E0; /* Light Orange */
+            --primary-color: #4CAF50; /* Green */
+            --secondary-color: #8BC34A; /* Light Green */
+            --background-color: #F1F8E9; /* Very Light Green */
             --text-color: #333;
             --white-color: #fff;
             --highlight-color: #FFEB3B; /* Yellow */
-            --board-bg-color: #FFE0B2; /* Lighter Orange */
+            --matched-color: #FFC107; /* Amber - Not used for background anymore */
+            --board-bg-color: #DCEDC8; /* Lighter Green */
             --circle-size: 40px;
             --gap-size: 8px;
-            --outer-ring-color: #E65100; /* Dark Orange for outer ring */
         }
 
         body {
@@ -37,26 +39,10 @@
             color: var(--text-color);
         }
 
-        .ad-container {
-            display: flex;
-            width: 100%;
-            justify-content: center;
-            align-items: stretch;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .main-content {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 0;
-        }
-
         .container {
             width: 95%;
-            max-width: 900px;
+            max-width: 900px; /* Increased max-width */
+            margin: 20px auto;
             background-color: var(--white-color);
             padding: 20px;
             border-radius: 12px;
@@ -64,33 +50,16 @@
             text-align: center;
         }
 
-        .ad-banner {
-            width: 100%;
-            min-height: 90px;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 14px;
-            color: #aaa;
-            border: 1px dashed #ccc;
-            box-sizing: border-box;
-            text-align: center;
-            margin: 10px 0;
+        header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
         }
 
-        .ad-side {
-            width: 200px;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 14px;
-            color: #aaa;
-            border: 1px dashed #ccc;
-            box-sizing: border-box;
-            text-align: center;
-            margin: 0 10px;
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 2.5em;
         }
 
         .game-area {
@@ -99,9 +68,9 @@
 
         .game-info {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-around; /* Better spacing */
             align-items: center;
-            flex-wrap: wrap;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
             margin-bottom: 20px;
             background-color: var(--background-color);
             padding: 15px;
@@ -109,12 +78,12 @@
         }
 
         .game-info div {
-            margin: 5px 10px;
+            margin: 5px 10px; /* Add some margin */
         }
 
         .game-info h2 {
             margin: 0;
-            font-size: 1.1em;
+            font-size: 1.1em; /* Adjust font size */
             color: var(--primary-color);
         }
         .game-info span {
@@ -125,14 +94,15 @@
 
         .game-board {
             display: grid;
-            grid-template-columns: repeat(var(--grid-cols), 1fr);
-            grid-template-rows: repeat(var(--grid-rows), 1fr);
+            grid-template-columns: repeat(17, 1fr);
+            grid-template-rows: repeat(10, 1fr); /* Adjusted rows if needed */
             gap: var(--gap-size);
-            margin: 20px auto;
+            margin: 20px auto; /* Center the board */
             background-color: var(--board-bg-color);
-            padding: 15px;
-            border-radius: 10px;
+            padding: 15px; /* Increased padding */
+            border-radius: 10px; /* Rounded corners */
             position: relative;
+            max-width: calc(17 * (var(--circle-size) + var(--gap-size)) + 10px); /* Dynamic width */
             box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         }
 
@@ -144,19 +114,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: calc(var(--circle-size) * 0.45);
+            font-size: calc(var(--circle-size) * 0.45); /* Scaled font size */
             color: white;
             font-weight: bold;
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.1s ease;
-            user-select: none;
+            user-select: none; /* Prevent text selection */
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            border: 2px solid transparent; /* For outer ring indication */
-            box-sizing: border-box;
-        }
-
-        .circle.outer-ring {
-            border-color: var(--outer-ring-color);
         }
 
         .circle:hover {
@@ -166,14 +130,26 @@
         .circle.selected {
             background-color: var(--highlight-color);
             color: var(--text-color);
-            transform: scale(1.1);
+            transform: scale(1.1); /* Slightly bigger when selected */
         }
 
-        .circle.matched {
-            visibility: hidden;
-            cursor: default;
-            pointer-events: none;
+        /* ================== 여기가 수정된 부분 ================== */
+        .circle.matched { /* Style for matched circles - Now makes them disappear */
+            visibility: hidden;   /* 요소를 보이지 않게 함 (공간은 유지) */
+            cursor: default;      /* 커서 기본값으로 */
+            pointer-events: none; /* 클릭 등 이벤트 비활성화 */
+            /* Removed properties: background-color, opacity, animation */
         }
+        /* ======================================================= */
+
+        /* Pop animation is no longer used by .matched, commenting out */
+        /*
+        @keyframes pop { /* Simple animation for matching */
+            /* 0% { transform: scale(1); } */
+            /* 50% { transform: scale(1.2); } */
+            /* 100% { transform: scale(1); opacity: 0.5; } */
+        /* } */
+        */
 
         .game-controls {
             margin-top: 20px;
@@ -192,7 +168,7 @@
         }
 
         .btn:hover {
-            background-color: #E65100; /* Darker Orange */
+            background-color: #388E3C; /* Darker Green */
         }
 
         .instructions {
@@ -208,14 +184,15 @@
             margin-bottom: 10px;
         }
 
+        /* Game Over Overlay */
         .overlay {
-            position: fixed;
+            position: fixed; /* Changed from absolute to fixed */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.7);
-            display: none;
+            display: none; /* Initially hidden */
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -236,6 +213,7 @@
             font-size: 1.2em;
             margin: 10px 0;
          }
+
 
         footer {
             margin-top: 40px;
@@ -258,19 +236,15 @@
 
         /* Responsive Design */
         @media (max-width: 900px) {
-            .ad-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .ad-side {
-                width: 90%;
-                margin: 10px 0;
-            }
-            .main-content {
-                padding: 10px 0;
-            }
             .container {
                 width: 98%;
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            .game-board {
+                max-width: 100%; /* Allow shrinking */
             }
              :root {
                 --circle-size: 35px;
@@ -281,13 +255,13 @@
             }
              .game-info span {
                  font-size: 1.1em;
-             }
+            }
         }
 
         @media (max-width: 600px) {
              header h1 {
                  font-size: 1.8em;
-             }
+            }
             .game-info {
                 flex-direction: column;
                 align-items: center;
@@ -295,7 +269,7 @@
             }
              .game-info div {
                  margin: 8px 0;
-             }
+            }
              :root {
                 --circle-size: 28px;
                 --gap-size: 4px;
@@ -306,64 +280,57 @@
              .btn {
                  padding: 10px 20px;
                  font-size: 0.9em;
-             }
+            }
              .overlay-content {
                  padding: 30px;
                  width: 80%;
-             }
+            }
         }
          @media (max-width: 450px) {
               :root {
                  --circle-size: 22px;
                  --gap-size: 3px;
-             }
+            }
         }
 
     </style>
 </head>
 <body>
-    <div class="ad-top ad-banner">상단 광고</div>
-    <div class="ad-container">
-        <div class="ad-left ad-side">좌측 광고</div>
-        <div class="main-content">
-            <div class="container">
-                <header>
-                    <h1>Number Sum 10 Challenge</h1>
-                </header>
 
-                <div class="game-area">
-                    <div class="game-info">
-                        <div class="score">
-                            <h2>SCORE: <span id="score">0</span></h2>
-                        </div>
-                        <div class="high-score"> <h2>HIGH SCORE: <span id="high-score">0</span></h2>
-                        </div>
-                        <div class="remaining">
-                            <h2>REMAINING: <span id="remaining-circles">0</span></h2>
-                        </div>
-                        <div class="timer">
-                            <h2>TIME: <span id="time">120</span>s</h2> </div>
-                    </div>
+    <div class="container">
+        <header>
+            <h1>Number Sum 10 Challenge</h1>
+        </header>
 
-                    <div id="game-board" class="game-board">
-                        </div>
+        <main class="game-area">
+            <div class="game-info">
+                <div class="score">
+                    <h2>SCORE: <span id="score">0</span></h2>
+                </div>
+                <div class="high-score"> <h2>HIGH SCORE: <span id="high-score">0</span></h2>
+                </div>
+                <div class="remaining">
+                    <h2>REMAINING: <span id="remaining-circles">170</span></h2>
+                </div>
+                <div class="timer">
+                    <h2>TIME: <span id="time">120</span>s</h2> </div>
+            </div>
 
-                    <div class="game-controls">
-                        <button id="restart-button" class="btn">Restart Game</button>
-                        </div>
+            <div id="game-board" class="game-board">
                 </div>
 
-                <section class="instructions">
-                    <h3>게임 방법</h3>
-                    <p>가장 바깥쪽에 위치한 숫자들 중에서 합이 10이 되는 두 개의 숫자를 찾아 클릭하세요. 숫자를 맞추면 해당 숫자들이 사라지고, **새로운 가장 바깥쪽**에 위치한 숫자들에서 다시 합이 10이 되는 숫자를 찾을 수 있습니다. 제한 시간 안에 모든 숫자를 없애거나 최대한 많은 점수를 획득하세요!</p>
-                    <p>시간이 다 되거나 더 이상 바깥쪽에서 합이 10이 되는 숫자가 없으면 게임이 종료됩니다.</p>
-                </section>
-            </div>
-        </div>
-        <div class="ad-right ad-side">우측 광고</div>
-    </div>
-    <div class="ad-bottom ad-banner">하단 광고</div>
-    <footer>
+            <div class="game-controls">
+                <button id="restart-button" class="btn">Restart Game</button>
+                </div>
+        </main>
+
+        <section class="instructions">
+            <h3>게임 방법</h3>
+            <p>같은 숫자 또는 합이 10이 되는 두 개의 숫자를 찾아 클릭하세요. 가로, 세로 또는 대각선으로 인접해 있거나, 중간에 다른 숫자가 없이 같은 줄의 끝과 시작에 있는 숫자들도 연결할 수 있습니다. (이 게임의 현재 로직은 합이 10인 것만 체크합니다. 인접성 규칙은 추가 개발이 필요합니다.) 제한 시간 안에 모든 숫자를 없애거나 최대한 많은 점수를 획득하세요!</p>
+            <p>시간이 다 되거나 남은 숫자가 없으면 게임이 종료됩니다.</p>
+       </section>
+
+    </div> <footer>
         <p>&copy; <span id="copy-year">2025</span> Your Game Company Name. All Rights Reserved.</p>
         <p>
             <a href="#privacy">개인정보처리방침</a> |
@@ -392,17 +359,15 @@
 
         let score = 0;
         let highScore = 0;
-        let remainingCircles = 0;
+        let remainingCircles = 0; // Will be set in setupGame
         let remainingTime = GAME_TIME;
-        let gameOver = true;
+        let gameOver = true; // Start as true, set to false on game start
         let selectedCircles = [];
-        let gameBoardData = []; // 2D array to represent the board (null for matched)
-        let gameBoardElements = []; // Array of all circle elements
         let startTime;
         let timerInterval;
 
         // DOM Elements
-        const gameBoardDiv = document.getElementById("game-board");
+        const gameBoard = document.getElementById("game-board");
         const scoreElement = document.getElementById("score");
         const highScoreElement = document.getElementById("high-score");
         const remainingCirclesElement = document.getElementById("remaining-circles");
@@ -414,11 +379,12 @@
         const playAgainButton = document.getElementById("play-again-button");
         const copyYearElement = document.getElementById("copy-year");
 
-        // Audio Elements (paths need to be correct)
+        // Audio Elements
         const clickSound = document.getElementById('click-sound');
         const matchSound = document.getElementById('match-sound');
         const gameoverSound = document.getElementById('gameover-sound');
 
+        // --- Sound Functions ---
         function playSound(sound) {
             if (sound && sound.readyState >= 3) {
                 sound.currentTime = 0;
@@ -426,82 +392,40 @@
             }
         }
 
+        // --- Game Initialization ---
         function setupGame() {
             console.log('Setting up game...');
-            gameBoardDiv.innerHTML = '';
+            gameBoard.innerHTML = '';
             selectedCircles = [];
-            gameBoardData = [];
-            gameBoardElements = [];
             gameOver = false;
             score = 0;
+            remainingCircles = GRID_WIDTH * GRID_HEIGHT;
             remainingTime = GAME_TIME;
             startTime = Date.now();
             gameOverOverlay.style.display = 'none';
 
-            highScore = localStorage.getItem('outerSumHighScore') || 0;
+            highScore = localStorage.getItem('numberSumHighScore') || 0;
 
-            document.documentElement.style.setProperty('--grid-cols', GRID_WIDTH);
-            document.documentElement.style.setProperty('--grid-rows', GRID_HEIGHT);
-
-            for (let row = 0; row < GRID_HEIGHT; row++) {
-                gameBoardData[row] = [];
-                for (let col = 0; col < GRID_WIDTH; col++) {
-                    const value = Math.floor(Math.random() * 9) + 1;
-                    gameBoardData[row][col] = value;
-                    const circle = document.createElement('div');
-                    circle.classList.add('circle');
-                    circle.dataset.row = row;
-                    circle.dataset.col = col;
-                    circle.dataset.value = value;
-                    circle.textContent = value;
-                    circle.addEventListener('click', () => handleCircleClick(circle));
-                    gameBoardDiv.appendChild(circle);
-                    gameBoardElements.push(circle);
-                }
+            for (let i = 0; i < GRID_WIDTH * GRID_HEIGHT; i++) {
+                const value = Math.floor(Math.random() * 9) + 1;
+                const circle = document.createElement('div');
+                circle.classList.add('circle');
+                circle.dataset.value = value;
+                circle.textContent = value;
+                circle.addEventListener('click', () => handleCircleClick(circle));
+                gameBoard.appendChild(circle);
             }
 
-            updateOuterRing();
-            remainingCircles = gameBoardElements.filter(circle => !circle.classList.contains('matched')).length;
             updateUI();
             startTimer();
             console.log('Game setup complete. Timer started.');
         }
 
-        function updateOuterRing() {
-            gameBoardElements.forEach(circle => circle.classList.remove('outer-ring'));
-
-            const rows = gameBoardData.length;
-            const cols = gameBoardData[0] ? gameBoardData[0].length : 0;
-
-            if (rows === 0 || cols === 0) return;
-
-            for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < cols; j++) {
-                    const circle = getCircleFromRowCol(i, j);
-                    if (circle && !circle.classList.contains('matched')) {
-                        if (i === 0 || i === rows - 1 || j === 0 || j === cols - 1 ||
-                            (gameBoardData[i - 1] && gameBoardData[i - 1][j] === null) ||
-                            (gameBoardData[i + 1] && gameBoardData[i + 1][j] === null) ||
-                            (gameBoardData[i][j - 1] !== undefined && gameBoardData[i][j - 1] === null) ||
-                            (gameBoardData[i][j + 1] !== undefined && gameBoardData[i][j + 1] === null)) {
-                            circle.classList.add('outer-ring');
-                        }
-                    }
-                }
-            }
-        }
-
-        function getCircleFromRowCol(row, col) {
-            return gameBoardElements.find(circle =>
-                parseInt(circle.dataset.row) === row && parseInt(circle.dataset.col) === col
-            );
-        }
-
+        // --- Core Game Logic ---
         function handleCircleClick(circle) {
-            if (gameOver || circle.classList.contains('matched') || !circle.classList.contains('outer-ring')) return;
+            if (gameOver || circle.classList.contains('matched')) return;
 
             playSound(clickSound);
-
             const index = selectedCircles.indexOf(circle);
             if (index > -1) {
                 circle.classList.remove('selected');
@@ -527,20 +451,19 @@
             if (value1 + value2 === 10) {
                 playSound(matchSound);
                 score += 1;
+                remainingCircles -= 2;
 
                 selectedCircles.forEach(c => {
                     c.classList.remove('selected');
-                    c.classList.add('matched');
-                    gameBoardData[parseInt(c.dataset.row)][parseInt(c.dataset.col)] = null;
+                    c.classList.add('matched'); // This class now triggers visibility:hidden via CSS
                 });
-                selectedCircles = [];
 
-                updateOuterRing();
-                remainingCircles = gameBoardElements.filter(circle => !circle.classList.contains('matched')).length;
+                selectedCircles = [];
 
                 if (remainingCircles <= 0) {
                     endGame(true);
                 }
+
             } else {
                 setTimeout(() => {
                     selectedCircles.forEach(c => c.classList.remove('selected'));
@@ -550,6 +473,7 @@
             updateUI();
         }
 
+        // --- UI Updates ---
         function updateUI() {
             scoreElement.textContent = score;
             highScoreElement.textContent = highScore;
@@ -557,6 +481,7 @@
             timeElement.textContent = Math.ceil(remainingTime);
         }
 
+        // --- Timer Logic ---
         function startTimer() {
             if (timerInterval) clearInterval(timerInterval);
 
@@ -579,6 +504,7 @@
             }, 1000);
         }
 
+        // --- Game End Logic ---
         function endGame(isWon) {
             if (gameOver) return;
 
@@ -589,24 +515,26 @@
 
             if (score > highScore) {
                 highScore = score;
-                localStorage.setItem('outerSumHighScore', highScore);
+                localStorage.setItem('numberSumHighScore', highScore);
             }
 
             finalScoreElement.textContent = score;
             finalHighScoreElement.textContent = highScore;
             gameOverOverlay.style.display = 'flex';
             if (isWon) {
-                document.getElementById('game-over-title').textContent = "Congratulations! You Cleared the Outer Ring!";
+                document.getElementById('game-over-title').textContent = "Congratulations! You Cleared the Board!";
             } else {
                 document.getElementById('game-over-title').textContent = "Time's Up!";
             }
         }
 
+        // --- Event Listeners ---
         restartButton.addEventListener('click', setupGame);
         playAgainButton.addEventListener('click', setupGame);
 
+        // --- Initial Setup ---
         copyYearElement.textContent = new Date().getFullYear();
-        highScore = localStorage.getItem('outerSumHighScore') || 0;
+        highScore = localStorage.getItem('numberSumHighScore') || 0;
         highScoreElement.textContent = highScore;
         setupGame();
 
