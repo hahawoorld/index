@@ -2,341 +2,154 @@
 <html lang="ko">
 <head>
     <meta name="google-site-verification" content="PAuQHXkuy1Oo2WAbKsScv8ehg1lxFcL04btg2PYIuW0" />
-    <meta name="google-adsense-account" content="ca-pub-4547328202745686">
-    <meta charset="UTF-8">
+    <meta name="google-adsense-account" content="ca-pub-4547328202745686"><meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Number Sum 10 Challenge - 두뇌 회전 숫자 퍼즐 게임</title>
     <meta name="description" content="숫자들의 합이 10이 되도록 연결하는 재미있는 두뇌 회전 퍼즐 게임입니다. 제한 시간 안에 얼마나 많은 숫자를 없앨 수 있을까요? 지금 도전해보세요!">
     <meta name="keywords" content="숫자 게임, 합 10 만들기, 두뇌 게임, 퍼즐 게임, 웹 게임, number sum game, puzzle game">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary-color: #4CAF50; /* Green */
-            --secondary-color: #8BC34A; /* Light Green */
-            --background-color: #F1F8E9; /* Very Light Green */
-            --text-color: #333;
-            --white-color: #fff;
-            --highlight-color: #FFEB3B; /* Yellow */
-            --matched-color: #FFC107; /* Amber - Not used for background anymore */
-            --board-bg-color: #DCEDC8; /* Lighter Green */
-            --circle-size: 40px;
-            --gap-size: 8px;
-        }
-
-        body {
-            font-family: 'Noto Sans KR', Arial, sans-serif;
-            background-color: var(--background-color);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--text-color);
-        }
-
-        .container {
-            width: 95%;
-            max-width: 900px; /* Increased max-width */
-            margin: 20px auto;
-            background-color: var(--white-color);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        header {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        header h1 {
-            color: var(--primary-color);
-            margin: 0;
-            font-size: 2.5em;
-        }
-
-        .game-area {
-            margin-top: 20px;
-        }
-
-        .game-info {
-            display: flex;
-            justify-content: space-around; /* Better spacing */
-            align-items: center;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-            margin-bottom: 20px;
-            background-color: var(--background-color);
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .game-info div {
-            margin: 5px 10px; /* Add some margin */
-        }
-
-        .game-info h2 {
-            margin: 0;
-            font-size: 1.1em; /* Adjust font size */
-            color: var(--primary-color);
-        }
-        .game-info span {
-            font-weight: bold;
-            color: var(--text-color);
-            font-size: 1.3em;
-        }
-
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(17, 1fr);
-            grid-template-rows: repeat(10, 1fr); /* Adjusted rows if needed */
-            gap: var(--gap-size);
-            margin: 20px auto; /* Center the board */
-            background-color: var(--board-bg-color);
-            padding: 15px; /* Increased padding */
-            border-radius: 10px; /* Rounded corners */
-            position: relative;
-            max-width: calc(17 * (var(--circle-size) + var(--gap-size)) + 10px); /* Dynamic width */
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-        }
-
-        .circle {
-            width: var(--circle-size);
-            height: var(--circle-size);
-            background-color: var(--secondary-color);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: calc(var(--circle-size) * 0.45); /* Scaled font size */
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.1s ease;
-            user-select: none; /* Prevent text selection */
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .circle:hover {
-            filter: brightness(1.1);
-        }
-
-        .circle.selected {
-            background-color: var(--highlight-color);
-            color: var(--text-color);
-            transform: scale(1.1); /* Slightly bigger when selected */
-        }
-
-        /* ================== 여기가 수정된 부분 ================== */
-        .circle.matched { /* Style for matched circles - Now makes them disappear */
-            visibility: hidden;   /* 요소를 보이지 않게 함 (공간은 유지) */
-            cursor: default;      /* 커서 기본값으로 */
-            pointer-events: none; /* 클릭 등 이벤트 비활성화 */
-            /* Removed properties: background-color, opacity, animation */
-        }
-        /* ======================================================= */
-
-        /* Pop animation is no longer used by .matched, commenting out */
-        /*
-        @keyframes pop { /* Simple animation for matching */
-            /* 0% { transform: scale(1); } */
-            /* 50% { transform: scale(1.2); } */
-            /* 100% { transform: scale(1); opacity: 0.5; } */
-        /* } */
-        */
-
-        .game-controls {
-            margin-top: 20px;
-        }
-
-        .btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1em;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin: 0 10px;
-        }
-
-        .btn:hover {
-            background-color: #388E3C; /* Darker Green */
-        }
-
-        .instructions {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-            font-size: 1.1em;
-            color: #555;
-            line-height: 1.6;
-        }
-        .instructions h3 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        /* Game Over Overlay */
-        .overlay {
-            position: fixed; /* Changed from absolute to fixed */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none; /* Initially hidden */
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .overlay-content {
-            background-color: white;
-            padding: 40px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        }
-        .overlay-content h2 {
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-         .overlay-content p {
-            font-size: 1.2em;
-            margin: 10px 0;
-         }
-
-
-        footer {
-            margin-top: 40px;
-            padding: 20px;
-            width: 100%;
-            background-color: #e0e0e0;
-            text-align: center;
-            font-size: 0.9em;
-            color: #666;
-            box-sizing: border-box;
-        }
-        footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 900px) {
-            .container {
-                width: 98%;
-                padding: 15px;
-            }
-            header h1 {
-                font-size: 2em;
-            }
-            .game-board {
-                max-width: 100%; /* Allow shrinking */
-            }
-             :root {
-                --circle-size: 35px;
-                --gap-size: 6px;
-            }
-            .game-info h2 {
-                font-size: 1em;
-            }
-             .game-info span {
-                 font-size: 1.1em;
-            }
-        }
-
-        @media (max-width: 600px) {
-             header h1 {
-                 font-size: 1.8em;
-            }
-            .game-info {
-                flex-direction: column;
-                align-items: center;
-                 padding: 10px;
-            }
-             .game-info div {
-                 margin: 8px 0;
-            }
-             :root {
-                --circle-size: 28px;
-                --gap-size: 4px;
-            }
-            .game-board {
-                 padding: 10px;
-            }
-             .btn {
-                 padding: 10px 20px;
-                 font-size: 0.9em;
-            }
-             .overlay-content {
-                 padding: 30px;
-                 width: 80%;
-            }
-        }
-         @media (max-width: 450px) {
-              :root {
-                 --circle-size: 22px;
-                 --gap-size: 3px;
-            }
-        }
-
-    </style>
-</head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="enhanced-style.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> </head>
 <body>
-
-    <div class="container">
-        <header>
+    <header>
+        <div class="container header-content">
+            <!-- <img src="images/game-logo.png" alt="게임 로고" class="logo"> -->
             <h1>Number Sum 10 Challenge</h1>
-        </header>
+            <nav>
+                <ul>
+                    <li><a href="#how-to-play">게임 방법</a></li>
+                    <li><a href="#features">게임 특징</a></li>
+                    <li><a href="#high-scores">최고 기록</a></li>
+                    <li><a href="#share">공유하기</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-        <main class="game-area">
-            <div class="game-info">
-                <div class="score">
-                    <h2>SCORE: <span id="score">0</span></h2>
+    <main class="game-container">
+        <section id="hero" class="hero-section">
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <h2>두뇌를 자극하는 짜릿한 숫자 퍼즐!</h2>
+                    <p>Number Sum 10 Challenge에서 순발력과 논리력을 시험해보세요! 제한 시간 안에 숫자들을 연결하여 합이 10이 되도록 만들고 최고 기록에 도전하세요!</p>
+                    <div class="cta-buttons">
+                        <button id="start-game-button" class="btn"><i class="fas fa-play"></i> 게임 시작</button>
+                        <button id="view-high-scores" class="btn"><i class="fas fa-trophy"></i> 최고 기록 보기</button>
+                    </div>
                 </div>
-                <div class="high-score"> <h2>HIGH SCORE: <span id="high-score">0</span></h2>
+                <div class="hero-image">
+                  <!--  <img src="images/game-screenshot.png" alt="게임 스크린샷"> -->
                 </div>
-                <div class="remaining">
-                    <h2>REMAINING: <span id="remaining-circles">170</span></h2>
-                </div>
-                <div class="timer">
-                    <h2>TIME: <span id="time">120</span>s</h2> </div>
             </div>
+        </section>
 
-            <div id="game-board" class="game-board">
+        <section id="game-play-area" class="game-play-area">
+            <div class="container game-play-wrapper">
+                <div class="game-info enhanced-info">
+                    <div class="score">
+                        <i class="fas fa-star"></i> <h2>SCORE: <span id="score">0</span></h2>
+                    </div>
+                    <div class="high-score">
+                        <i class="fas fa-crown"></i> <h2>HIGH SCORE: <span id="high-score">0</span></h2>
+                    </div>
+                    <div class="remaining">
+                        <i class="fas fa-circle-notch"></i> <h2>REMAINING: <span id="remaining-circles">170</span></h2>
+                    </div>
+                    <div class="timer">
+                        <i class="fas fa-hourglass-half"></i> <h2>TIME: <span id="time">120</span>s</h2>
+                    </div>
                 </div>
 
-            <div class="game-controls">
-                <button id="restart-button" class="btn">Restart Game</button>
+                <div id="game-board" class="game-board enhanced-board">
+                    </div>
+
+                <div class="game-controls enhanced-controls">
+                    <button id="restart-button" class="btn"><i class="fas fa-redo"></i> Restart Game</button>
                 </div>
-        </main>
+            </div>
+        </section>
 
-        <section class="instructions">
-            <h3>게임 방법</h3>
-            <p>같은 숫자 또는 합이 10이 되는 두 개의 숫자를 찾아 클릭하세요. 가로, 세로 또는 대각선으로 인접해 있거나, 중간에 다른 숫자가 없이 같은 줄의 끝과 시작에 있는 숫자들도 연결할 수 있습니다. (이 게임의 현재 로직은 합이 10인 것만 체크합니다. 인접성 규칙은 추가 개발이 필요합니다.) 제한 시간 안에 모든 숫자를 없애거나 최대한 많은 점수를 획득하세요!</p>
-            <p>시간이 다 되거나 남은 숫자가 없으면 게임이 종료됩니다.</p>
-       </section>
+        <section id="how-to-play" class="instructions enhanced-instructions">
+            <div class="container">
+                <h3><i class="fas fa-question-circle"></i> 게임 방법</h3>
+                <p>같은 숫자 또는 합이 10이 되는 두 개의 숫자를 찾아 클릭하세요. ... (기존 게임 방법 설명 유지)</p>
+                <ul>
+                    <li><i class="fas fa-hand-point-right"></i> 같은 숫자 (예: 5 + 5) 또는 합이 10 (예: 3 + 7, 1 + 9)이 되는 숫자를 선택하세요.</li>
+                    <li><i class="fas fa-arrows-alt"></i> 가로, 세로, 대각선 인접 또는 같은 줄의 끝과 시작에 있는 숫자들을 연결할 수 있습니다. (현재 로직은 합이 10인 것만 체크합니다.)</li>
+                    <li><i class="fas fa-stopwatch"></i> 제한 시간 안에 최대한 많은 숫자를 제거하여 높은 점수를 획득하세요.</li>
+                    <li><i class="fas fa-exclamation-triangle"></i> 시간이 종료되거나 더 이상 연결할 수 있는 숫자가 없으면 게임이 종료됩니다.</li>
+                </ul>
+            </div>
+        </section>
 
-    </div> <footer>
-        <p>&copy; <span id="copy-year">2025</span> Your Game Company Name. All Rights Reserved.</p>
-        <p>
-            <a href="#privacy">개인정보처리방침</a> |
-            <a href="#terms">이용약관</a> |
-            <a href="#contact">문의하기</a>
-            </p>
+        <section id="features" class="features-section enhanced-features">
+            <div class="container">
+                <h2><i class="fas fa-puzzle-piece"></i> 게임 특징</h2>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-brain fa-2x"></i>
+                        <h3>두뇌 훈련</h3>
+                        <p>논리적 사고력과 순발력을 향상시키는 재미있는 퍼즐 게임입니다.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-stopwatch fa-2x"></i>
+                        <h3>시간 제한 모드</h3>
+                        <p>긴장감 넘치는 시간 제한 모드에서 당신의 한계를 시험해보세요.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-trophy fa-2x"></i>
+                        <h3>최고 기록 경쟁</h3>
+                        <p>자신의 최고 기록을 경신하고 다른 플레이어들과 경쟁해보세요.</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-palette fa-2x"></i>
+                        <h3>세련된 디자인</h3>
+                        <p>눈을 즐겁게 하는 깔끔하고 현대적인 디자인을 경험하세요.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="high-scores" class="high-scores-section enhanced-high-scores">
+            <div class="container">
+                <h2><i class="fas fa-chart-bar"></i> 최고 기록</h2>
+                <ul id="high-score-list">
+                    <li><i class="fas fa-user"></i> Player 1: <span>150</span></li>
+                    <li><i class="fas fa-user"></i> Player 2: <span>120</span></li>
+                    <li><i class="fas fa-user"></i> Player 3: <span>90</span></li>
+                    </ul>
+                <p class="no-scores" style="display:none;">아직 최고 기록이 없습니다. 당신이 첫 번째 기록을 세워보세요!</p>
+            </div>
+        </section>
+
+        <section id="share" class="share-section enhanced-share">
+            <div class="container">
+                <h2><i class="fas fa-share-alt"></i> 친구들과 공유하세요!</h2>
+                <div class="social-links">
+                    <a href="#" class="social-button facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
+                    <a href="#" class="social-button twitter"><i class="fab fa-twitter"></i> Twitter</a>
+                    <a href="#" class="social-button kakao"><i class="fas fa-comment"></i> KakaoTalk</a>
+                    </div>
+            </div>
+        </section>
+
+        <div class="ad-placeholder">하단 광고 영역 (예: 320x100 or 728x90)</div>
+
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <p>&copy; <span id="copy-year">2025</span> Your Game Company Name. All Rights Reserved.</p>
+            <nav>
+                <ul>
+                    <li><a href="#privacy">개인정보처리방침</a></li>
+                    <li><a href="#terms">이용약관</a></li>
+                    <li><a href="#contact">문의하기</a></li>
+                </ul>
+            </nav>
+        </div>
     </footer>
 
     <div id="game-over-overlay" class="overlay">
@@ -344,7 +157,7 @@
             <h2 id="game-over-title">Game Over!</h2>
             <p>Your Score: <span id="final-score">0</span></p>
             <p>High Score: <span id="final-high-score">0</span></p>
-            <button id="play-again-button" class="btn">Play Again</button>
+            <button id="play-again-button" class="btn"><i class="fas fa-play-again"></i> Play Again</button>
         </div>
     </div>
 
@@ -353,20 +166,21 @@
     <audio id="gameover-sound" src="path/to/gameover.mp3" preload="auto"></audio>
 
     <script>
+        // JavaScript 코드는 그대로 유지하되, DOM 요소 선택자를 변경했다면 해당 부분을 수정해야 합니다.
         const GRID_WIDTH = 17;
         const GRID_HEIGHT = 10;
         const GAME_TIME = 120; // seconds
 
         let score = 0;
         let highScore = 0;
-        let remainingCircles = 0; // Will be set in setupGame
+        let remainingCircles = 0;
         let remainingTime = GAME_TIME;
-        let gameOver = true; // Start as true, set to false on game start
+        let gameOver = true;
         let selectedCircles = [];
         let startTime;
         let timerInterval;
 
-        // DOM Elements
+        // DOM Elements (변경된 ID 및 클래스에 맞춰 업데이트 필요)
         const gameBoard = document.getElementById("game-board");
         const scoreElement = document.getElementById("score");
         const highScoreElement = document.getElementById("high-score");
@@ -378,13 +192,16 @@
         const finalHighScoreElement = document.getElementById("final-high-score");
         const playAgainButton = document.getElementById("play-again-button");
         const copyYearElement = document.getElementById("copy-year");
+        const highScoreListElement = document.getElementById("high-score-list"); // 최고 기록 리스트
+        const noScoresMessage = document.querySelector(".high-scores-section .no-scores"); // 최고 기록 없을 때 메시지
+        const startGameButton = document.getElementById("start-game-button"); // 게임 시작 버튼
 
-        // Audio Elements
+        // Audio Elements (유지)
         const clickSound = document.getElementById('click-sound');
         const matchSound = document.getElementById('match-sound');
         const gameoverSound = document.getElementById('gameover-sound');
 
-        // --- Sound Functions ---
+        // --- Sound Functions (유지) ---
         function playSound(sound) {
             if (sound && sound.readyState >= 3) {
                 sound.currentTime = 0;
@@ -392,7 +209,7 @@
             }
         }
 
-        // --- Game Initialization ---
+        // --- Game Initialization (수정: 시작 버튼 이벤트 리스너 추가) ---
         function setupGame() {
             console.log('Setting up game...');
             gameBoard.innerHTML = '';
@@ -421,10 +238,9 @@
             console.log('Game setup complete. Timer started.');
         }
 
-        // --- Core Game Logic ---
+        // --- Core Game Logic (유지) ---
         function handleCircleClick(circle) {
             if (gameOver || circle.classList.contains('matched')) return;
-
             playSound(clickSound);
             const index = selectedCircles.indexOf(circle);
             if (index > -1) {
@@ -436,7 +252,6 @@
                     selectedCircles.push(circle);
                 }
             }
-
             if (selectedCircles.length === 2) {
                 checkMatch();
             }
@@ -452,18 +267,14 @@
                 playSound(matchSound);
                 score += 1;
                 remainingCircles -= 2;
-
                 selectedCircles.forEach(c => {
                     c.classList.remove('selected');
-                    c.classList.add('matched'); // This class now triggers visibility:hidden via CSS
+                    c.classList.add('matched');
                 });
-
                 selectedCircles = [];
-
                 if (remainingCircles <= 0) {
                     endGame(true);
                 }
-
             } else {
                 setTimeout(() => {
                     selectedCircles.forEach(c => c.classList.remove('selected'));
@@ -473,29 +284,26 @@
             updateUI();
         }
 
-        // --- UI Updates ---
+        // --- UI Updates (유지) ---
         function updateUI() {
             scoreElement.textContent = score;
             highScoreElement.textContent = highScore;
             remainingCirclesElement.textContent = remainingCircles;
             timeElement.textContent = Math.ceil(remainingTime);
+            updateHighScoreList(); // 최고 기록 리스트 업데이트
         }
 
-        // --- Timer Logic ---
+        // --- Timer Logic (유지) ---
         function startTimer() {
             if (timerInterval) clearInterval(timerInterval);
-
             startTime = Date.now() - (GAME_TIME - remainingTime) * 1000;
-
             timerInterval = setInterval(() => {
                 if (gameOver) {
                     clearInterval(timerInterval);
                     return;
                 }
-
                 const elapsedTime = (Date.now() - startTime) / 1000;
                 remainingTime = GAME_TIME - elapsedTime;
-
                 if (remainingTime <= 0) {
                     remainingTime = 0;
                     endGame(false);
@@ -504,20 +312,17 @@
             }, 1000);
         }
 
-        // --- Game End Logic ---
+        // --- Game End Logic (유지) ---
         function endGame(isWon) {
             if (gameOver) return;
-
             console.log('Game Over. Won:', isWon);
             gameOver = true;
             clearInterval(timerInterval);
             playSound(gameoverSound);
-
             if (score > highScore) {
                 highScore = score;
                 localStorage.setItem('numberSumHighScore', highScore);
             }
-
             finalScoreElement.textContent = score;
             finalHighScoreElement.textContent = highScore;
             gameOverOverlay.style.display = 'flex';
@@ -528,16 +333,64 @@
             }
         }
 
-        // --- Event Listeners ---
+        // --- 최고 기록 관리 ---
+        function getHighScores() {
+            const scores = localStorage.getItem('numberSumHighScores');
+            return scores ? JSON.parse(scores).sort((a, b) => b - a).slice(0, 5) : [];
+        }
+
+        function saveHighScore() {
+            const highScores = getHighScores();
+            highScores.push(score);
+            highScores.sort((a, b) => b - a);
+            localStorage.setItem('numberSumHighScores', JSON.stringify(highScores.slice(0, 5)));
+            updateHighScore }
+            // --- 최고 기록 관리 (이어지는 부분) ---
+        function updateHighScoreList() {
+            const highScores = getHighScores();
+            highScoreListElement.innerHTML = '';
+            if (highScores.length > 0) {
+                noScoresMessage.style.display = 'none';
+                highScores.forEach((s, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `<i class="fas fa-medal" style="color:${getMedalColor(index)}"></i> Player ${index + 1}: <span>${s}</span>`;
+                    highScoreListElement.appendChild(listItem);
+                });
+            } else {
+                noScoresMessage.style.display = 'block';
+            }
+            // 개인 최고 기록 업데이트 (화면 상단)
+            highScore = Math.max(...highScores, localStorage.getItem('numberSumHighScore') || 0);
+            highScoreElement.textContent = highScore;
+            finalHighScoreElement.textContent = highScore;
+        }
+
+        function getMedalColor(index) {
+            switch (index) {
+                case 0: return '#FFD700'; // Gold
+                case 1: return '#C0C0C0'; // Silver
+                case 2: return '#CD7F32'; // Bronze
+                default: return '#fff';
+            }
+        }
+
+        function saveCurrentScoreAsHighScore() {
+            const highScores = getHighScores();
+            highScores.push(score);
+            highScores.sort((a, b) => b - a);
+            localStorage.setItem('numberSumHighScores', JSON.stringify(highScores.slice(0, 5)));
+            updateHighScoreList();
+        }
+
+        // --- 이벤트 리스너 (추가: 시작 게임 버튼) ---
         restartButton.addEventListener('click', setupGame);
         playAgainButton.addEventListener('click', setupGame);
+        startGameButton.addEventListener('click', setupGame);
 
-        // --- Initial Setup ---
+        // --- 초기 설정 ---
         copyYearElement.textContent = new Date().getFullYear();
-        highScore = localStorage.getItem('numberSumHighScore') || 0;
-        highScoreElement.textContent = highScore;
-        setupGame();
-
+        updateHighScoreList(); // 초기 최고 기록 리스트 로드 및 표시
+        setupGame(); // 게임 초기화 및 시작
     </script>
 
 </body>
